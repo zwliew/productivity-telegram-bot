@@ -4,6 +4,7 @@ from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, Ch
 import logging
 import datetime
 import uuid
+import os
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -139,10 +140,14 @@ def error_callback(update, context):
 
 def main():
     token = None
-    with open('.dotenv') as file:
-        for line in file:
-            if line.startswith('TOKEN='):
-                token = line[6:]
+    try:
+        with open('.dotenv') as file:
+            for line in file:
+                if line.startswith('TOKEN='):
+                    token = line[6:]
+    except FileNotFoundError:
+        token = os.environ.get('TOKEN')
+
     if not token:
         logger.error(
             "Please add a token to your .dotenv file in the format 'TOKEN=<token>'!")
