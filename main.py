@@ -1,14 +1,19 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, CallbackContext
-from telegram import InlineQueryResultArticle, InputTextMessageContent
-from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
 import logging
 import datetime
 import uuid
 import os
 
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, CallbackContext
+from telegram import InlineQueryResultArticle, InputTextMessageContent
+from telegram.error import TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError
+
+from flask import Flask
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
 
 
 def reminder_help(update, context):
@@ -190,5 +195,4 @@ def main():
     updater.idle()
 
 
-if __name__ == '__main__':
-    main()
+main()
