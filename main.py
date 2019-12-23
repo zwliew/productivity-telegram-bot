@@ -54,6 +54,7 @@ def remind_daily(update, context):
         return
 
     hour = time // 100
+    hour_utc = (hour + 16) % 24
     mins = time % 100
     message = ' '.join(context.args[1:])
     context = {'chat_id': update.effective_chat.id, 'message': message}
@@ -87,12 +88,13 @@ def remind(update, context):
         return
 
     hour = time // 100
+    hour_utc = (hour + 16) % 24
     mins = time % 100
     message = ' '.join(context.args[1:])
     context = {'chat_id': update.effective_chat.id, 'message': message}
 
     new_job = job_queue.run_once(reminder_callback, datetime.time(
-        hour=hour, minute=mins), context=context)
+        hour=hour_utc, minute=mins), context=context)
     job_cnt += 1
     scheduled_jobs[str(job_cnt)] = new_job
 
