@@ -140,22 +140,17 @@ def error_callback(update, context):
 
 
 def main():
-    token = None
+    env_vars = {}
     try:
         with open('.env') as file:
             for line in file:
-                if line.startswith('TOKEN='):
-                    token = line[6:]
+                parts = line.split('=')
+                env_vars[parts[0].lower()] = parts[1].strip()
     except FileNotFoundError:
-        token = os.environ.get('TOKEN')
-
-    if not token:
-        logger.error(
-            "Please add a token to your .env file in the format 'TOKEN=<token>'!")
-        return
+        env_vars['token'] = os.environ.get('TOKEN')
 
     updater = Updater(
-        token=token, use_context=True)
+        token=env_vars['token'], use_context=True)
     dispatcher = updater.dispatcher
 
     global job_queue
@@ -182,21 +177,10 @@ def main():
 
     dispatcher.add_error_handler(error_callback)
 
-    port = os.environ.get('PORT')
-    if not port:
-        port = 8080
-
-    # Start the webhook
-    updater.start_webhook(listen="0.0.0.0",
-                          port=port,
-                          url_path=token)
-    updater.bot.setWebhook(
-        f"https://remind-everyone-bot.herokuapp.com/{token}")
-
     # Block until you press Ctrl-C or the process receives SIGINT, SIGTERM or
     # SIGABRT. This should be used most of the time, since start_polling() is
     # non-blocking and will stop the bot gracefully.
-    updater.idle()
+    updater.start_polling()
 
 
 if __name__ == '__main__':
