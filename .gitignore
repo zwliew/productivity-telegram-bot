@@ -5,4 +5,4 @@ venv
 .vscode
 
 # Environment variables
-.dotenv
+.env

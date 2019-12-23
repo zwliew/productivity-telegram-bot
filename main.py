@@ -142,7 +142,7 @@ def error_callback(update, context):
 def main():
     token = None
     try:
-        with open('.dotenv') as file:
+        with open('.env') as file:
             for line in file:
                 if line.startswith('TOKEN='):
                     token = line[6:]
@@ -151,7 +151,7 @@ def main():
 
     if not token:
         logger.error(
-            "Please add a token to your .dotenv file in the format 'TOKEN=<token>'!")
+            "Please add a token to your .env file in the format 'TOKEN=<token>'!")
         return
 
     updater = Updater(
