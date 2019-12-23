@@ -32,7 +32,10 @@ job_cnt = 0
 def reminder_callback(context: CallbackContext):
     message = context.job.context['message']
     chat_id = context.job.context['chat_id']
+    job_id = context.job.context['job_id']
     context.bot.send_message(chat_id=chat_id, text=f"Reminder! {message}! 📢")
+    if not scheduled_jobs[job_id].repeat:
+        del scheduled_jobs[job_id]
 
 
 def remind_daily(update, context):
@@ -57,12 +60,12 @@ def remind_daily(update, context):
     hour_utc = (hour + 16) % 24
     mins = time % 100
     message = ' '.join(context.args[1:])
-    context = {'chat_id': update.effective_chat.id, 'message': message}
+    job_cnt += 1
+    context = {'chat_id': update.effective_chat.id, 'message': message, 'job_id': job_cnt}
 
     new_job = job_queue.run_daily(reminder_callback, datetime.time(
-        hour=hour, minute=mins), context=context)
-    job_cnt += 1
-    scheduled_jobs[str(job_cnt)] = new_job
+        hour=hour_utc, minute=mins), context=context)
+    scheduled_jobs[job_cnt] = new_job
 
     formatted_time = f"{str(hour).rjust(2, '0')}{str(mins).rjust(2, '0')}"
     update.message.reply_text(
@@ -91,12 +94,12 @@ def remind(update, context):
     hour_utc = (hour + 16) % 24
     mins = time % 100
     message = ' '.join(context.args[1:])
-    context = {'chat_id': update.effective_chat.id, 'message': message}
+    job_cnt += 1
+    context = {'chat_id': update.effective_chat.id, 'message': message, 'job_id': job_cnt}
 
     new_job = job_queue.run_once(reminder_callback, datetime.time(
         hour=hour_utc, minute=mins), context=context)
-    job_cnt += 1
-    scheduled_jobs[str(job_cnt)] = new_job
+    scheduled_jobs[job_cnt] = new_job
 
     formatted_time = f"{str(hour).rjust(2, '0')}{str(mins).rjust(2, '0')}"
     update.message.reply_text(
