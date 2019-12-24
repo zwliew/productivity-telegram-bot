@@ -65,7 +65,7 @@ def remind_daily(update, context):
 
     new_job = job_queue.run_daily(reminder_callback, datetime.time(
         hour=hour_utc, minute=mins), context=context)
-    scheduled_jobs[job_cnt] = new_job
+    scheduled_jobs[str(job_cnt)] = new_job
 
     formatted_time = f"{str(hour).rjust(2, '0')}{str(mins).rjust(2, '0')}"
     update.message.reply_text(
@@ -99,7 +99,7 @@ def remind(update, context):
 
     new_job = job_queue.run_once(reminder_callback, datetime.time(
         hour=hour_utc, minute=mins), context=context)
-    scheduled_jobs[job_cnt] = new_job
+    scheduled_jobs[str(job_cnt)] = new_job
 
     formatted_time = f"{str(hour).rjust(2, '0')}{str(mins).rjust(2, '0')}"
     update.message.reply_text(
